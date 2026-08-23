@@ -115,9 +115,3 @@ Range: 10 pF to 47 µF (the last decade only contains 10, 22, 33, and 47 µF —
   and to the ESC key.
 - **Clean termination:** Successful return to the operating system on exit.
 - **Code quality:** Clear general template and intelligible, readable code.
-
-## 7. References
-
-- RC Low-pass Filter Design Tool: http://sim.okawa-denshi.jp/en/CRlowkeisan.htm
-- RC circuit: https://en.wikipedia.org/wiki/RC_circuit
-- Low-pass filter: https://en.wikipedia.org/wiki/Low-pass_filter
