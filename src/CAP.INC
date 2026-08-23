@@ -1,25 +1,26 @@
 ; =====================================================================
-;  capacitors.inc  --  standard capacitor value tables (E12, +/-10%).
+;  CAP.INC  --  standard capacitor value tables (E12, +/-10%).
 ; ---------------------------------------------------------------------
-;  Included inside the .DATA segment of LOWPASSF.asm, right after
-;  resistors.inc.  Contains only data declarations.
+;  Included inside the .DATA segment of LOWPASSF.ASM, right after
+;  RES.INC.  Contains only data declarations.
 ;
 ;  Layout (must stay exactly as below):
-;    * C_dec0 .. C_dec6 are seven contiguous REAL4 arrays holding the
-;      capacitance in FARADS, one array per decade:
-;         C_dec0 : 10..82   pF  (x 1e-12),  12 values
-;         C_dec1 : 100..820 pF  (x 1e-12),  12 values
-;         C_dec2 : 1..8.2   nF  (x 1e-9 ),  12 values
-;         C_dec3 : 10..82   nF  (x 1e-9 ),  12 values
-;         C_dec4 : 100..820 nF  (x 1e-9 ),  12 values
-;         C_dec5 : 1..8.2   uF  (x 1e-6 ),  12 values
-;         C_dec6 : 10,22,33,47 uF (x 1e-6),  4  values
+;    * cap_start .. cap_end are seven contiguous REAL4 arrays holding
+;      the capacitance in FARADS, one array per decade:
+;         decade 0: 10..82   pF  (x 1e-12),  12 values
+;         decade 1: 100..820 pF  (x 1e-12),  12 values
+;         decade 2: 1..8.2   nF  (x 1e-9 ),  12 values
+;         decade 3: 10..82   nF  (x 1e-9 ),  12 values
+;         decade 4: 100..820 nF  (x 1e-9 ),  12 values
+;         decade 5: 1..8.2   uF  (x 1e-6 ),  12 values
+;         decade 6: 10,22,33,47 uF (x 1e-6),  4  values
 ;      Total = 76 values = 304 bytes, indexed by FINDRC / DESIGNPRINT
 ;      with a byte offset DI in 0..300 (step 4).  Do NOT insert
 ;      anything between these arrays.
-;    * cdigit0 .. cdigit6 are the matching 6-byte display strings,
-;      laid out contiguously (12+12+12+12+12+12+4 strings) so
-;      DESIGNPRINT can reach string k via cdigit0 + (k/4)*6.
+;    * cap_digits_start .. cap_digits_end are the matching 6-byte
+;      display strings, laid out contiguously (12+12+12+12+12+12+4
+;      strings) so DESIGNPRINT can reach string k via
+;      cap_digits_start + (k/4)*6.
 ;
 ;  WHY THE CAPACITOR VALUES ARE HEX, NOT DECIMAL:
 ;    21 of the 76 values differ by one ULP from the IEEE-754 value
@@ -32,34 +33,39 @@
 ;    the comment next to each array.
 ; =====================================================================
 
+C_TABLE_SIZE   EQU 304           ; 76 capacitors * 4 bytes
+
 ; ---- float values (farads), one contiguous block of 7 arrays -------
-C_dec0  DWORD  2d2febffH,2d531b32H,2d83f0ffH,2d9e5466H,2dc18399H,2ded7e98H,2e1122b2H,2e2b8619H,2e4eb54cH,2e764a65H,2e958899H,2eb451e5H
-                ; 10,12,15,18,22,27,33,39,47,56,68,82 pF
+cap_start LABEL DWORD
+DWORD  2d2febffH,2d531b32H,2d83f0ffH,2d9e5466H,2dc18399H,2ded7e98H,2e1122b2H,2e2b8619H,2e4eb54cH,2e764a65H,2e958899H,2eb451e5H
+        ; 10,12,15,18,22,27,33,39,47,56,68,82 pF
 
-C_dec1  DWORD  2edbe6ffH,2f03f0ffH,2f24ed3fH,2f45e980H,2f71e47fH,2f946f1fH,2fb56b5eH,2fd6679fH,30013150H,3019ee7fH,303aeabfH,3061665eH
-                ; 100,120,150,180,220,270,330,390,470,560,680,820 pF
+DWORD  2edbe6ffH,2f03f0ffH,2f24ed3fH,2f45e980H,2f71e47fH,2f946f1fH,2fb56b5eH,2fd6679fH,30013150H,3019ee7fH,303aeabfH,3061665eH
+        ; 100,120,150,180,220,270,330,390,470,560,680,820 pF
 
-C_dec2  DWORD  3089705fH,30a4ed3fH,30ce288fH,30f763e0H,31172ecfH,31398ae7H,3162c636H,318600c3H,31a17da4H,31c06a1fH,31e9a56fH,320cdffbH
-                ; 1.0,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2 nF
+DWORD  3089705fH,30a4ed3fH,30ce288fH,30f763e0H,31172ecfH,31398ae7H,3162c636H,318600c3H,31a17da4H,31c06a1fH,31e9a56fH,320cdffbH
+        ; 1.0,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2 nF
 
-C_dec3  DWORD  322bcc77H,324e288fH,3280d959H,329a9e6cH,32bcfa83H,32e7eda1H,330dbbe2H,332780f4H,3349dd0dH,337084a7H,33920765H,33b017faH
-                ; 10,12,15,18,22,27,33,39,47,56,68,82 nF
+DWORD  322bcc77H,324e288fH,3280d959H,329a9e6cH,32bcfa83H,32e7eda1H,330dbbe2H,332780f4H,3349dd0dH,337084a7H,33920765H,33b017faH
+        ; 10,12,15,18,22,27,33,39,47,56,68,82 nF
 
-C_dec4  DWORD  33d6bf95H,3400d959H,34210fafH,34414607H,346c3924H,3490f485H,34b12adaH,34d16131H,34fc5450H,351652e8H,3536893eH,355c1df8H
-                ; 100,120,150,180,220,270,330,390,470,560,680,820 nF
+DWORD  33d6bf95H,3400d959H,34210fafH,34414607H,346c3924H,3490f485H,34b12adaH,34d16131H,34fc5450H,351652e8H,3536893eH,355c1df8H
+        ; 100,120,150,180,220,270,330,390,470,560,680,820 nF
 
-C_dec5  DWORD  358637bdH,35a10fafH,35c9539bH,35f19789H,3613a3b6H,363531a6H,365d7590H,3682dcbfH,369db4b2H,36bbe7a2H,36e42b8eH,370992bbH
-                ; 1.0,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2 uF
+DWORD  358637bdH,35a10fafH,35c9539bH,35f19789H,3613a3b6H,363531a6H,365d7590H,3682dcbfH,369db4b2H,36bbe7a2H,36e42b8eH,370992bbH
+        ; 1.0,1.2,1.5,1.8,2.2,2.7,3.3,3.9,4.7,5.6,6.8,8.2 uF
 
-C_dec6  DWORD  3727c5acH,37b88ca4H,380a697bH,384521deH
-                ; 10,22,33,47 uF
+DWORD  3727c5acH,37b88ca4H,380a697bH,384521deH
+        ; 10,22,33,47 uF
+cap_end LABEL DWORD
 
-
+cap_digits_start LABEL BYTE
 ; ---- display strings, one contiguous block (12+12+12+12+12+12+4) ---
-cdigit0 BYTE  "010.0p","012.0p","015.0p","018.0p","022.0p","027.0p","033.0p","039.0p","047.0p","056.0p","068.0p","082.0p"
-cdigit1 BYTE  "100.0p","120.0p","150.0p","180.0p","220.0p","270.0p","330.0p","390.0p","470.0p","560.0p","680.0p","820.0p"
-cdigit2 BYTE  "001.0n","001.2n","001.5n","001.8n","002.2n","002.7n","003.3n","003.9n","004.7n","005.6n","006.8n","008.2n"
-cdigit3 BYTE  "010.0n","012.0n","015.0n","018.0n","022.0n","027.0n","033.0n","039.0n","047.0n","056.0n","068.0n","082.0n"
-cdigit4 BYTE  "100.0n","120.0n","150.0n","180.0n","220.0n","270.0n","330.0n","390.0n","470.0n","560.0n","680.0n","820.0n"
-cdigit5 BYTE  "001.0u","001.2u","001.5u","001.8u","002.2u","002.7u","003.3u","003.9u","004.7u","005.6u","006.8u","008.2u"
-cdigit6 BYTE  "010.0u","022.0u","033.0u","047.0u"
+BYTE  "010.0p","012.0p","015.0p","018.0p","022.0p","027.0p","033.0p","039.0p","047.0p","056.0p","068.0p","082.0p"
+BYTE  "100.0p","120.0p","150.0p","180.0p","220.0p","270.0p","330.0p","390.0p","470.0p","560.0p","680.0p","820.0p"
+BYTE  "001.0n","001.2n","001.5n","001.8n","002.2n","002.7n","003.3n","003.9n","004.7n","005.6n","006.8n","008.2n"
+BYTE  "010.0n","012.0n","015.0n","018.0n","022.0n","027.0n","033.0n","039.0n","047.0n","056.0n","068.0n","082.0n"
+BYTE  "100.0n","120.0n","150.0n","180.0n","220.0n","270.0n","330.0n","390.0n","470.0n","560.0n","680.0n","820.0n"
+BYTE  "001.0u","001.2u","001.5u","001.8u","002.2u","002.7u","003.3u","003.9u","004.7u","005.6u","006.8u","008.2u"
+BYTE  "010.0u","022.0u","033.0u","047.0u"
+cap_digits_end LABEL BYTE
